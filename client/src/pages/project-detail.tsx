@@ -247,6 +247,8 @@ export default function ProjectDetail() {
           projects={[project]}
           count={wishlistTasks.length}
           color="purple"
+          allTasks={projectTasks}
+          onCreateTask={() => setShowCreateTask(true)}
         />
         <KanbanColumn
           title="To-Do"
@@ -255,6 +257,8 @@ export default function ProjectDetail() {
           projects={[project]}
           count={todoTasks.length}
           color="slate"
+          allTasks={projectTasks}
+          onCreateTask={() => setShowCreateTask(true)}
         />
         <KanbanColumn
           title="In Process"
@@ -263,6 +267,8 @@ export default function ProjectDetail() {
           projects={[project]}
           count={inProcessTasks.length}
           color="amber"
+          allTasks={projectTasks}
+          onCreateTask={() => setShowCreateTask(true)}
         />
         <KanbanColumn
           title="Finished"
@@ -271,6 +277,8 @@ export default function ProjectDetail() {
           projects={[project]}
           count={finishedTasks.length}
           color="emerald"
+          allTasks={projectTasks}
+          onCreateTask={() => setShowCreateTask(true)}
         />
       </div>
 

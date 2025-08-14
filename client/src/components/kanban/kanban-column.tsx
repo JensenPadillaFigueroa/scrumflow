@@ -14,9 +14,11 @@ interface KanbanColumnProps {
   projects: Project[];
   count: number;
   color: "slate" | "amber" | "emerald" | "purple";
+  allTasks?: Task[];
+  onCreateTask?: () => void;
 }
 
-export default function KanbanColumn({ title, status, tasks, projects, count, color }: KanbanColumnProps) {
+export default function KanbanColumn({ title, status, tasks, projects, count, color, allTasks, onCreateTask }: KanbanColumnProps) {
   const { toast } = useToast();
 
   const updateTaskMutation = useMutation({
@@ -42,8 +44,10 @@ export default function KanbanColumn({ title, status, tasks, projects, count, co
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const taskId = e.dataTransfer.getData("text/plain");
-    const task = tasks.find(t => t.id === taskId) || 
-                 projects.flatMap(p => tasks.filter(t => t.projectId === p.id)).find(t => t.id === taskId);
+    
+    // Find the task in all tasks (not just this column's tasks)
+    const allTasksList = allTasks || tasks;
+    const task = allTasksList.find(t => t.id === taskId);
     
     if (task && task.status !== status) {
       updateTaskMutation.mutate({ taskId, newStatus: status });
@@ -95,7 +99,13 @@ export default function KanbanColumn({ title, status, tasks, projects, count, co
             {count}
           </span>
         </div>
-        <Button variant="ghost" size="sm" className={styles.plusColor}>
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className={styles.plusColor}
+          onClick={onCreateTask}
+          data-testid={`button-add-task-${status}`}
+        >
           <Plus className="h-4 w-4" />
         </Button>
       </div>
