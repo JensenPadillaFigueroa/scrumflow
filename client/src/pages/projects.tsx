@@ -8,6 +8,7 @@ import { Plus, Folder, Edit2, Trash2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
+import { Link } from "wouter";
 import CreateProjectModal from "@/components/modals/create-project-modal";
 import type { Project, Task } from "@shared/schema";
 
@@ -133,71 +134,79 @@ export default function Projects() {
             const progress = projectTasks.length > 0 ? (completedTasks.length / projectTasks.length) * 100 : 0;
 
             return (
-              <Card
-                key={project.id}
-                className="hover:shadow-md transition-shadow cursor-pointer group"
-                data-testid={`project-card-${project.id}`}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-12 h-12 bg-primary-blue rounded-lg flex items-center justify-center text-xl">
-                      {getCategoryIcon(project.category)}
-                    </div>
-                    <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-gray-400 hover:text-gray-600"
-                        data-testid={`button-edit-${project.id}`}
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-gray-400 hover:text-red-500"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDeleteProject(project.id, project.name);
-                        }}
-                        disabled={deleteProjectMutation.isPending}
-                        data-testid={`button-delete-${project.id}`}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                  
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2" data-testid={`text-project-name-${project.id}`}>
-                    {project.name}
-                  </h3>
-                  
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-3" data-testid={`text-project-description-${project.id}`}>
-                    {project.description}
-                  </p>
-                  
-                  <div className="flex items-center justify-between mb-4">
-                    <Badge className={getCategoryColor(project.category)} data-testid={`badge-category-${project.id}`}>
-                      {project.category}
-                    </Badge>
-                    <span className="text-xs text-gray-500" data-testid={`text-task-count-${project.id}`}>
-                      {projectTasks.length} task{projectTasks.length !== 1 ? 's' : ''}
-                    </span>
-                  </div>
-                  
-                  <div className="mt-4 bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-primary-blue h-2 rounded-full transition-all duration-300" 
-                      style={{ width: `${progress}%` }}
-                      data-testid={`progress-bar-${project.id}`}
-                    />
-                  </div>
-                  
-                  <p className="text-xs text-gray-500 mt-2" data-testid={`text-progress-${project.id}`}>
-                    {Math.round(progress)}% Complete
-                  </p>
-                </CardContent>
-              </Card>
+              <Link key={project.id} href={`/projects/${project.id}`}>
+                <a>
+                  <Card
+                    className="hover:shadow-md transition-shadow cursor-pointer group"
+                    data-testid={`project-card-${project.id}`}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="w-12 h-12 bg-primary-blue rounded-lg flex items-center justify-center text-xl">
+                          {getCategoryIcon(project.category)}
+                        </div>
+                        <div className="flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-gray-400 hover:text-gray-600"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                            }}
+                            data-testid={`button-edit-${project.id}`}
+                          >
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="text-gray-400 hover:text-red-500"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleDeleteProject(project.id, project.name);
+                            }}
+                            disabled={deleteProjectMutation.isPending}
+                            data-testid={`button-delete-${project.id}`}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2" data-testid={`text-project-name-${project.id}`}>
+                        {project.name}
+                      </h3>
+                      
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-3" data-testid={`text-project-description-${project.id}`}>
+                        {project.description}
+                      </p>
+                      
+                      <div className="flex items-center justify-between mb-4">
+                        <Badge className={getCategoryColor(project.category)} data-testid={`badge-category-${project.id}`}>
+                          {project.category}
+                        </Badge>
+                        <span className="text-xs text-gray-500" data-testid={`text-task-count-${project.id}`}>
+                          {projectTasks.length} task{projectTasks.length !== 1 ? 's' : ''}
+                        </span>
+                      </div>
+                      
+                      <div className="mt-4 bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="bg-primary-blue h-2 rounded-full transition-all duration-300" 
+                          style={{ width: `${progress}%` }}
+                          data-testid={`progress-bar-${project.id}`}
+                        />
+                      </div>
+                      
+                      <p className="text-xs text-gray-500 mt-2" data-testid={`text-progress-${project.id}`}>
+                        {Math.round(progress)}% Complete
+                      </p>
+                    </CardContent>
+                  </Card>
+                </a>
+              </Link>
             );
           })}
         </div>

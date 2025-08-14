@@ -69,11 +69,13 @@ export class MemStorage implements IStorage {
   async deleteProject(id: string): Promise<boolean> {
     const deleted = this.projects.delete(id);
     // Also delete associated tasks
-    for (const [taskId, task] of this.tasks.entries()) {
+    const tasksToDelete: string[] = [];
+    this.tasks.forEach((task, taskId) => {
       if (task.projectId === id) {
-        this.tasks.delete(taskId);
+        tasksToDelete.push(taskId);
       }
-    }
+    });
+    tasksToDelete.forEach(taskId => this.tasks.delete(taskId));
     return deleted;
   }
 
@@ -95,6 +97,7 @@ export class MemStorage implements IStorage {
     const task: Task = {
       ...insertTask,
       id,
+      status: insertTask.status || "todo",
       createdAt: new Date(),
     };
     this.tasks.set(id, task);

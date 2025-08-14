@@ -152,28 +152,32 @@ export default function Dashboard() {
                   };
 
                   return (
-                    <div key={project.id} className="flex items-center p-3 rounded-lg border border-slate-200 hover:bg-slate-50" data-testid={`project-card-${project.id}`}>
-                      <div className="w-10 h-10 bg-primary-blue rounded-lg flex items-center justify-center">
-                        <Folder className="text-white h-4 w-4" />
-                      </div>
-                      <div className="ml-3 flex-1">
-                        <h4 className="text-sm font-medium text-gray-900">{project.name}</h4>
-                        <div className="flex items-center space-x-2 mt-1">
-                          <Badge variant="secondary" className={getCategoryColor(project.category)}>
-                            {project.category}
-                          </Badge>
-                          <span className="text-xs text-gray-500">
-                            {projectTasks.length} task{projectTasks.length !== 1 ? 's' : ''}
-                          </span>
+                    <Link key={project.id} href={`/projects/${project.id}`}>
+                      <a>
+                        <div className="flex items-center p-3 rounded-lg border border-slate-200 hover:bg-slate-50 cursor-pointer" data-testid={`project-card-${project.id}`}>
+                          <div className="w-10 h-10 bg-primary-blue rounded-lg flex items-center justify-center">
+                            <Folder className="text-white h-4 w-4" />
+                          </div>
+                          <div className="ml-3 flex-1">
+                            <h4 className="text-sm font-medium text-gray-900">{project.name}</h4>
+                            <div className="flex items-center space-x-2 mt-1">
+                              <Badge variant="secondary" className={getCategoryColor(project.category)}>
+                                {project.category}
+                              </Badge>
+                              <span className="text-xs text-gray-500">
+                                {projectTasks.length} task{projectTasks.length !== 1 ? 's' : ''}
+                              </span>
+                            </div>
+                            <div className="mt-2 bg-gray-200 rounded-full h-1.5">
+                              <div 
+                                className="bg-primary-blue h-1.5 rounded-full" 
+                                style={{ width: `${progress}%` }}
+                              />
+                            </div>
+                          </div>
                         </div>
-                        <div className="mt-2 bg-gray-200 rounded-full h-1.5">
-                          <div 
-                            className="bg-primary-blue h-1.5 rounded-full" 
-                            style={{ width: `${progress}%` }}
-                          />
-                        </div>
-                      </div>
-                    </div>
+                      </a>
+                    </Link>
                   );
                 })}
               </div>

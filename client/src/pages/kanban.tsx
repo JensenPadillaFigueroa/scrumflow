@@ -21,7 +21,7 @@ export default function Kanban() {
   });
 
   // Filter tasks by selected project if one is selected
-  const tasks = selectedProject 
+  const tasks = selectedProject && selectedProject !== "all"
     ? allTasks.filter(task => task.projectId === selectedProject)
     : allTasks;
 
@@ -67,7 +67,7 @@ export default function Kanban() {
               <SelectValue placeholder="All Projects" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All Projects</SelectItem>
+              <SelectItem value="all">All Projects</SelectItem>
               {projects.map((project) => (
                 <SelectItem key={project.id} value={project.id}>
                   {project.name}
