@@ -33,6 +33,7 @@ export default function ProjectDetail() {
 
   // Filter tasks for this project
   const projectTasks = allTasks.filter(task => task.projectId === id);
+  const wishlistTasks = projectTasks.filter(task => task.status === "wishlist");
   const todoTasks = projectTasks.filter(task => task.status === "todo");
   const inProcessTasks = projectTasks.filter(task => task.status === "in-process");
   const finishedTasks = projectTasks.filter(task => task.status === "finished");
@@ -159,7 +160,21 @@ export default function ProjectDetail() {
       </div>
 
       {/* Progress Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Folder className="text-purple-600 h-5 w-5" />
+              </div>
+              <div className="ml-4">
+                <p className="text-sm font-medium text-gray-600">Wishlist</p>
+                <p className="text-2xl font-bold text-gray-900" data-testid="stat-wishlist-tasks">{wishlistTasks.length}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center">
@@ -224,7 +239,15 @@ export default function ProjectDetail() {
       </Card>
 
       {/* Kanban Board */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full min-h-96">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full min-h-96">
+        <KanbanColumn
+          title="Wishlist"
+          status="wishlist"
+          tasks={wishlistTasks}
+          projects={[project]}
+          count={wishlistTasks.length}
+          color="purple"
+        />
         <KanbanColumn
           title="To-Do"
           status="todo"

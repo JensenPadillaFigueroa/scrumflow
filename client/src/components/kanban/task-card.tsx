@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit2, Trash2, Clock, User } from "lucide-react";
+import { Edit2, Trash2, Clock, User, ChevronLeft, ChevronRight } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
@@ -11,10 +11,11 @@ import type { Task, Project } from "@shared/schema";
 interface TaskCardProps {
   task: Task;
   project?: Project;
-  color: "slate" | "amber" | "emerald";
+  color: "slate" | "amber" | "emerald" | "purple";
+  onStatusChange?: (taskId: string, newStatus: string) => void;
 }
 
-export default function TaskCard({ task, project, color }: TaskCardProps) {
+export default function TaskCard({ task, project, color, onStatusChange }: TaskCardProps) {
   const { toast } = useToast();
 
   const deleteTaskMutation = useMutation({
@@ -53,6 +54,7 @@ export default function TaskCard({ task, project, color }: TaskCardProps) {
       case "slate": return "border-slate-200";
       case "amber": return "border-amber-200";
       case "emerald": return "border-emerald-200";
+      case "purple": return "border-purple-200";
     }
   };
 
@@ -69,21 +71,47 @@ export default function TaskCard({ task, project, color }: TaskCardProps) {
     }
   };
 
-  const formatDueDate = (date: Date | string | null) => {
-    if (!date) return null;
-    const d = new Date(date);
-    const now = new Date();
-    const diffTime = d.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays < 0) return "Overdue";
-    if (diffDays === 0) return "Due today";
-    if (diffDays === 1) return "Due tomorrow";
-    if (diffDays < 7) return `Due in ${diffDays} days`;
-    return `Due ${d.toLocaleDateString()}`;
-  };
 
   const isFinished = task.status === "finished";
+
+  // Define stage progression
+  const getNextStage = (currentStatus: string) => {
+    switch (currentStatus) {
+      case "wishlist": return "todo";
+      case "todo": return "in-process";
+      case "in-process": return "finished";
+      default: return null;
+    }
+  };
+
+  const getPreviousStage = (currentStatus: string) => {
+    switch (currentStatus) {
+      case "finished": return "in-process";
+      case "in-process": return "todo";
+      case "todo": return "wishlist";
+      default: return null;
+    }
+  };
+
+  const handleMoveNext = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const nextStage = getNextStage(task.status);
+    if (nextStage && onStatusChange) {
+      onStatusChange(task.id, nextStage);
+    }
+  };
+
+  const handleMovePrevious = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const previousStage = getPreviousStage(task.status);
+    if (previousStage && onStatusChange) {
+      onStatusChange(task.id, previousStage);
+    }
+  };
+
+  const canMoveNext = getNextStage(task.status) !== null;
+  const canMovePrevious = getPreviousStage(task.status) !== null;
 
   return (
     <Card
@@ -98,6 +126,30 @@ export default function TaskCard({ task, project, color }: TaskCardProps) {
             {task.title}
           </h4>
           <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            {canMovePrevious && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-gray-400 hover:text-blue-600 h-6 w-6 p-0"
+                onClick={handleMovePrevious}
+                title="Move to previous stage"
+                data-testid={`button-move-previous-${task.id}`}
+              >
+                <ChevronLeft className="h-3 w-3" />
+              </Button>
+            )}
+            {canMoveNext && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-gray-400 hover:text-blue-600 h-6 w-6 p-0"
+                onClick={handleMoveNext}
+                title="Move to next stage"
+                data-testid={`button-move-next-${task.id}`}
+              >
+                <ChevronRight className="h-3 w-3" />
+              </Button>
+            )}
             {!isFinished && (
               <Button
                 variant="ghost"
@@ -147,12 +199,7 @@ export default function TaskCard({ task, project, color }: TaskCardProps) {
             </Badge>
           )}
           <div className="flex items-center space-x-2">
-            {task.dueDate && !isFinished && (
-              <div className="flex items-center space-x-1 text-xs text-gray-500" data-testid={`text-due-date-${task.id}`}>
-                <Clock className="h-3 w-3" />
-                <span>{formatDueDate(task.dueDate)}</span>
-              </div>
-            )}
+
             {isFinished && (
               <span className="text-xs text-gray-400" data-testid={`text-completed-date-${task.id}`}>
                 Completed {new Date(task.createdAt!).toLocaleDateString()}

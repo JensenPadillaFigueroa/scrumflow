@@ -25,6 +25,7 @@ export default function Kanban() {
     ? allTasks.filter(task => task.projectId === selectedProject)
     : allTasks;
 
+  const wishlistTasks = tasks.filter(task => task.status === "wishlist");
   const todoTasks = tasks.filter(task => task.status === "todo");
   const inProcessTasks = tasks.filter(task => task.status === "in-process");
   const finishedTasks = tasks.filter(task => task.status === "finished");
@@ -45,8 +46,8 @@ export default function Kanban() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {[...Array(3)].map((_, i) => (
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {[...Array(4)].map((_, i) => (
             <Skeleton key={i} className="h-96 rounded-xl" />
           ))}
         </div>
@@ -93,7 +94,15 @@ export default function Kanban() {
           <p className="text-gray-500 mb-6">Create a project first to start managing tasks</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full min-h-96">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full min-h-96">
+          <KanbanColumn
+            title="Wishlist"
+            status="wishlist"
+            tasks={wishlistTasks}
+            projects={projects}
+            count={wishlistTasks.length}
+            color="purple"
+          />
           <KanbanColumn
             title="To-Do"
             status="todo"

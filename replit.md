@@ -30,8 +30,15 @@ Preferred communication style: Simple, everyday language.
 ### Data Models
 The application manages three core entities:
 - **Projects**: Main organizational units with name, description, and category
-- **Tasks**: Work items linked to projects with status tracking (todo, in-process, finished)
+- **Tasks**: Work items linked to projects with status tracking (wishlist, todo, in-process, finished)
 - **Wishlist Items**: Ideas that can be promoted to full projects
+
+### Recent Changes (August 2025)
+- **Task Management Enhancement**: Added wishlist column as first stage in task workflow
+- **Hover-Drag Functionality**: Implemented arrow buttons on task cards for easy stage progression
+- **Removed Due Dates**: Simplified task model by removing due date field from task creation and management
+- **Four-Column Layout**: Updated both project detail and Kanban pages to support Wishlist → To-Do → In Process → Finished workflow
+- **Mobile Responsive**: Ensured new four-column layout works on mobile with proper grid responsiveness
 
 ### API Design
 RESTful API structure with endpoints for:

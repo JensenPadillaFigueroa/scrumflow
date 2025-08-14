@@ -37,7 +37,7 @@ const formSchema = insertTaskSchema.extend({
   title: z.string().min(1, "Task title is required"),
   description: z.string().min(1, "Description is required"),
   projectId: z.string().min(1, "Project is required"),
-  status: z.enum(["todo", "in-process", "finished"]),
+  status: z.enum(["wishlist", "todo", "in-process", "finished"]),
 });
 
 interface CreateTaskModalProps {
@@ -59,8 +59,7 @@ export default function CreateTaskModal({ open, onOpenChange, defaultProject }: 
       title: "",
       description: "",
       projectId: defaultProject || "",
-      status: "todo",
-      dueDate: undefined,
+      status: "wishlist",
     },
   });
 
@@ -73,10 +72,7 @@ export default function CreateTaskModal({ open, onOpenChange, defaultProject }: 
 
   const createTaskMutation = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
-      const response = await apiRequest("POST", "/api/tasks", {
-        ...data,
-        dueDate: data.dueDate ? new Date(data.dueDate) : null,
-      });
+      const response = await apiRequest("POST", "/api/tasks", data);
       return response.json();
     },
     onSuccess: () => {
@@ -185,30 +181,12 @@ export default function CreateTaskModal({ open, onOpenChange, defaultProject }: 
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
+                      <SelectItem value="wishlist">Wishlist</SelectItem>
                       <SelectItem value="todo">To-Do</SelectItem>
                       <SelectItem value="in-process">In Process</SelectItem>
                       <SelectItem value="finished">Finished</SelectItem>
                     </SelectContent>
                   </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="dueDate"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Due Date (Optional)</FormLabel>
-                  <FormControl>
-                    <Input 
-                      type="date" 
-                      {...field}
-                      value={field.value ? new Date(field.value).toISOString().split('T')[0] : ''}
-                      data-testid="input-task-due-date"
-                    />
-                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

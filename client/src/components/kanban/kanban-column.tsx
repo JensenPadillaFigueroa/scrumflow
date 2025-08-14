@@ -13,7 +13,7 @@ interface KanbanColumnProps {
   tasks: Task[];
   projects: Project[];
   count: number;
-  color: "slate" | "amber" | "emerald";
+  color: "slate" | "amber" | "emerald" | "purple";
 }
 
 export default function KanbanColumn({ title, status, tasks, projects, count, color }: KanbanColumnProps) {
@@ -73,6 +73,13 @@ export default function KanbanColumn({ title, status, tasks, projects, count, co
           badgeColor: "bg-emerald-200 text-emerald-700",
           plusColor: "text-emerald-500 hover:text-emerald-700"
         };
+      case "purple":
+        return {
+          bg: "bg-purple-50",
+          dotColor: "bg-purple-500",
+          badgeColor: "bg-purple-200 text-purple-700",
+          plusColor: "text-purple-500 hover:text-purple-700"
+        };
     }
   };
 
@@ -112,6 +119,9 @@ export default function KanbanColumn({ title, status, tasks, projects, count, co
                 task={task}
                 project={project}
                 color={color}
+                onStatusChange={(taskId, newStatus) => 
+                  updateTaskMutation.mutate({ taskId, newStatus })
+                }
               />
             );
           })

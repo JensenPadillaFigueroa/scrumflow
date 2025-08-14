@@ -16,8 +16,8 @@ export const tasks = pgTable("tasks", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   projectId: varchar("project_id").references(() => projects.id),
-  status: text("status").notNull().default("todo"), // todo, in-process, finished
-  dueDate: timestamp("due_date"),
+  status: text("status").notNull().default("wishlist"), // wishlist, todo, in-process, finished
+
   createdAt: timestamp("created_at").defaultNow(),
 });
 
