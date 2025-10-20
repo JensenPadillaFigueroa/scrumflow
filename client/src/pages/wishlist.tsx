@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Lightbulb, ArrowUp, Trash2, Heart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { AdminCreatedBadge } from "@/components/ui/admin-created-badge";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import AddWishlistModal from "@/components/modals/add-wishlist-modal";
@@ -200,9 +201,14 @@ export default function Wishlist() {
                   </div>
                 </div>
                 
-                <h3 className="text-lg font-semibold text-gray-900 mb-2" data-testid={`text-item-title-${item.id}`}>
-                  {item.title}
-                </h3>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900" data-testid={`text-item-title-${item.id}`}>
+                    {item.title}
+                  </h3>
+                  <AdminCreatedBadge 
+                    createdByAdminUsername={(item as any).created_by_admin_username}
+                  />
+                </div>
                 
                 <p className="text-sm text-gray-600 mb-4" data-testid={`text-item-description-${item.id}`}>
                   {item.description}

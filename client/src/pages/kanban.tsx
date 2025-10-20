@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -7,10 +7,30 @@ import { Plus, Columns } from "lucide-react";
 import KanbanColumn from "@/components/kanban/kanban-column";
 import CreateTaskModal from "@/components/modals/create-task-modal";
 import type { Project, Task } from "@shared/schema";
+import { queryClient } from "@/lib/queryClient";
 
 export default function Kanban() {
   const [showCreateTask, setShowCreateTask] = useState(false);
   const [selectedProject, setSelectedProject] = useState<string>("");
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Escuchar drag global para pausar refetch durante DnD
+  useEffect(() => {
+    const handler = (e: any) => {
+      const dragging = !!e?.detail?.dragging;
+      setIsDragging(dragging);
+      if (dragging) {
+        queryClient.cancelQueries({ queryKey: ["/api/tasks"] });
+      }
+    };
+    try {
+      // Estado inicial si ya estaba draggeando
+      const d = (document.body as any)?.dataset?.kanbanDragging === "1";
+      setIsDragging(!!d);
+    } catch {}
+    window.addEventListener("kanban:drag", handler);
+    return () => window.removeEventListener("kanban:drag", handler);
+  }, []);
 
   const { data: projects = [], isLoading: projectsLoading } = useQuery<Project[]>({
     queryKey: ["/api/projects"],
@@ -18,6 +38,7 @@ export default function Kanban() {
 
   const { data: allTasks = [], isLoading: tasksLoading } = useQuery<Task[]>({
     queryKey: ["/api/tasks"],
+    enabled: !isDragging,
   });
 
   // Filter tasks by selected project if one is selected
@@ -25,10 +46,11 @@ export default function Kanban() {
     ? allTasks.filter(task => task.projectId === selectedProject)
     : allTasks;
 
-  const wishlistTasks = tasks.filter(task => task.status === "wishlist");
-  const todoTasks = tasks.filter(task => task.status === "todo");
-  const inProcessTasks = tasks.filter(task => task.status === "in-process");
-  const finishedTasks = tasks.filter(task => task.status === "finished");
+  // Use DB statuses to slice tasks per column
+  const wishlistTasks = tasks.filter(task => String(task.status).toLowerCase() === "wishlist");
+  const todoTasks = tasks.filter(task => String(task.status).toLowerCase() === "todo");
+  const inProcessTasks = tasks.filter(task => String(task.status).toLowerCase() === "in_progress");
+  const finishedTasks = tasks.filter(task => String(task.status).toLowerCase() === "done");
 
   const isLoading = projectsLoading || tasksLoading;
 
