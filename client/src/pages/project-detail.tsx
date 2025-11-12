@@ -207,8 +207,14 @@ export default function ProjectDetail() {
       <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-8 animate-fade-in-up">
         <div className="flex items-start space-x-3 sm:space-x-4">
           <Link href="/projects">
-            <Button variant="ghost" size="sm" data-testid="button-back-to-projects" className="transition-all duration-300 hover:scale-110 hover:-translate-y-0.5 hover:bg-blue-50">
-              <ArrowLeft className="h-4 w-4 transition-transform duration-300 hover:-translate-x-1" />
+            <Button 
+              variant="outline" 
+              size="default" 
+              data-testid="button-back-to-projects" 
+              className="transition-all duration-300 hover:scale-110 hover:-translate-y-1 hover:bg-blue-50 hover:border-blue-400 hover:shadow-lg border-2 px-4 py-2 h-auto"
+            >
+              <ArrowLeft className="h-5 w-5 mr-2 transition-transform duration-300 group-hover:-translate-x-1" />
+              <span className="font-medium">Back</span>
             </Button>
           </Link>
           <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary-blue rounded-xl flex items-center justify-center text-xl sm:text-2xl transition-all duration-300 hover:scale-110 hover:rotate-3 hover:bg-blue-600 hover:shadow-lg animate-fade-in-up" style={{animationDelay: '0.1s'}}>
