@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import { CheckCheck, Trash2, Bell, ChevronLeft, ChevronRight } from "lucide-react";
+import { CheckCheck, Trash2, Bell, ChevronLeft, ChevronRight, TestTube } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -122,6 +122,47 @@ export default function NotificationList({ notifications, onClose }: Notificatio
     }
   };
 
+  const handleTestNotification = () => {
+    if ("Notification" in window) {
+      if (Notification.permission === "granted") {
+        const notification = new Notification("🎉 Test Notification", {
+          body: "Desktop notifications are working! You'll receive updates like this.",
+          icon: "/favicon.ico",
+          badge: "/favicon.ico",
+          requireInteraction: false,
+          silent: false,
+        });
+
+        setTimeout(() => {
+          notification.close();
+        }, 5000);
+
+        toast({
+          title: "Test notification sent!",
+          description: "Check your Windows system tray.",
+        });
+      } else if (Notification.permission === "default") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") {
+            handleTestNotification();
+          }
+        });
+      } else {
+        toast({
+          title: "Notifications blocked",
+          description: "Please enable notifications in your browser settings.",
+          variant: "destructive",
+        });
+      }
+    } else {
+      toast({
+        title: "Not supported",
+        description: "Your browser doesn't support desktop notifications.",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (notifications.length === 0) {
     return (
       <div className="p-6 text-center">
@@ -154,6 +195,15 @@ export default function NotificationList({ notifications, onClose }: Notificatio
           )}
         </h3>
         <div className="flex items-center gap-1">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleTestNotification}
+            className="h-7 px-2 text-[11px] text-green-600 hover:text-green-700 hover:bg-green-50"
+            title="Test desktop notification"
+          >
+            <TestTube className="h-3 w-3" />
+          </Button>
           {unreadCount > 0 && (
             <Button
               variant="ghost"

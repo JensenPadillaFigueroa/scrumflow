@@ -15,6 +15,7 @@ import QuickNotes from "@/components/notes/quick-notes";
 import DashboardFocus from "@/components/dashboard/dashboard-focus";
 import FloatingNoteButton from "@/components/ui/floating-note-button";
 import NotificationBell from "@/components/notifications/notification-bell";
+import NotificationPermissionPrompt from "@/components/notifications/notification-permission-prompt";
 import { useToast } from "@/hooks/use-toast";
 import type { Project, Task, WishlistItem } from "@shared/schema";
 
@@ -450,6 +451,9 @@ export default function Dashboard() {
 
       {/* Floating Note Button */}
       <FloatingNoteButton />
+      
+      {/* Desktop Notification Permission Prompt */}
+      <NotificationPermissionPrompt />
     </div>
   );
 }

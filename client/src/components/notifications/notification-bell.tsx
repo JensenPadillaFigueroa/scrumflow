@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import NotificationList from "./notification-list.tsx";
+import { useDesktopNotifications } from "@/hooks/use-desktop-notifications";
 
 interface NotificationBellProps {
   className?: string;
@@ -16,6 +17,9 @@ interface NotificationBellProps {
 
 export default function NotificationBell({ className }: NotificationBellProps) {
   const [isOpen, setIsOpen] = useState(false);
+
+  // Activar notificaciones de escritorio
+  useDesktopNotifications();
 
   // Fetch notifications from backend with auto-refresh
   const { data: notificationData } = useQuery<{
