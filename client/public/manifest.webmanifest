@@ -1,0 +1,14 @@
+{
+    "name": "TekPro",
+    "short_name": "TekPro",
+    "description": "Projects, tasks & Kanban — fast and clean.",
+    "lang": "en",
+    "start_url": "/?source=pwa",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#0B5CF3",
+    "theme_color": "#0B5CF3",
+    "icons": [
+      { "src": "./tekpro-icon-transparente.ico", "sizes": "48x48", "type": "image/x-icon" }
+    ]
+  }

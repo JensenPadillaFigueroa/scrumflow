@@ -1,0 +1,63 @@
+2025-10-03T21:50:56: [2025-10-04T01:50:56.058Z] Simple Windows Service initialized
+2025-10-03T21:50:56: [2025-10-04T01:50:56.071Z] Simple Service started on port 3009
+2025-10-03T21:50:56: [2025-10-04T01:50:56.072Z] Access at: http://localhost:3009
+2025-10-03T21:53:41: [2025-10-04T01:53:41.118Z] Simple Windows Service initialized
+2025-10-03T21:53:41: [2025-10-04T01:53:41.140Z] Simple Service started on port 3008
+2025-10-03T21:53:41: [2025-10-04T01:53:41.142Z] Access at: http://localhost:3008
+2025-10-03T21:54:08: [2025-10-04T01:54:08.195Z] Simple Windows Service initialized
+2025-10-03T21:54:08: [2025-10-04T01:54:08.240Z] Simple Service started on port 3008
+2025-10-03T21:54:08: [2025-10-04T01:54:08.258Z] Access at: http://localhost:3008
+2025-10-03T21:54:18: [2025-10-04T01:54:18.456Z] GET /login - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:54:19: [2025-10-04T01:54:19.724Z] Simple Windows Service initialized
+2025-10-03T21:54:19: [2025-10-04T01:54:19.755Z] Simple Service started on port 3008
+2025-10-03T21:54:19: [2025-10-04T01:54:19.756Z] Access at: http://localhost:3008
+2025-10-03T21:54:20: [2025-10-04T01:54:20.279Z] GET /login - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:54:21: [2025-10-04T01:54:21.212Z] Simple Windows Service initialized
+2025-10-03T21:54:21: [2025-10-04T01:54:21.232Z] Simple Service started on port 3008
+2025-10-03T21:54:21: [2025-10-04T01:54:21.233Z] Access at: http://localhost:3008
+2025-10-03T21:54:21: [2025-10-04T01:54:21.961Z] GET /login - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:54:24: [2025-10-04T01:54:24.940Z] Simple Windows Service initialized
+2025-10-03T21:54:24: [2025-10-04T01:54:24.965Z] Simple Service started on port 3008
+2025-10-03T21:54:24: [2025-10-04T01:54:24.967Z] Access at: http://localhost:3008
+2025-10-03T21:54:25: [2025-10-04T01:54:25.394Z] GET /login - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:54:28: [2025-10-04T01:54:28.397Z] Simple Windows Service initialized
+2025-10-03T21:54:28: [2025-10-04T01:54:28.427Z] Simple Service started on port 3008
+2025-10-03T21:54:28: [2025-10-04T01:54:28.429Z] Access at: http://localhost:3008
+2025-10-03T21:54:30: [2025-10-04T01:54:30.833Z] GET /login - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:54:31: [2025-10-04T01:54:31.230Z] Simple Windows Service initialized
+2025-10-03T21:54:31: [2025-10-04T01:54:31.244Z] Simple Service started on port 3008
+2025-10-03T21:54:31: [2025-10-04T01:54:31.245Z] Access at: http://localhost:3008
+2025-10-03T21:55:01: [2025-10-04T01:55:01.134Z] GET /login - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:55:02: [2025-10-04T01:55:02.070Z] Simple Windows Service initialized
+2025-10-03T21:55:02: [2025-10-04T01:55:02.123Z] Simple Service started on port 3008
+2025-10-03T21:55:02: [2025-10-04T01:55:02.126Z] Access at: http://localhost:3008
+2025-10-03T21:55:02: [2025-10-04T01:55:02.420Z] GET /login - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:55:03: [2025-10-04T01:55:03.879Z] Simple Windows Service initialized
+2025-10-03T21:55:03: [2025-10-04T01:55:03.901Z] Simple Service started on port 3008
+2025-10-03T21:55:03: [2025-10-04T01:55:03.903Z] Access at: http://localhost:3008
+2025-10-03T21:55:15: [2025-10-04T01:55:15.678Z] GET / - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:55:15: [2025-10-04T01:55:15.770Z] GET /favicon.ico - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:55:16: [2025-10-04T01:55:16.542Z] Simple Windows Service initialized
+2025-10-03T21:55:16: [2025-10-04T01:55:16.558Z] Simple Service started on port 3008
+2025-10-03T21:55:16: [2025-10-04T01:55:16.559Z] Access at: http://localhost:3008
+2025-10-03T21:55:17: [2025-10-04T01:55:17.019Z] GET /favicon.ico - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:55:18: [2025-10-04T01:55:18.181Z] Simple Windows Service initialized
+2025-10-03T21:55:18: [2025-10-04T01:55:18.200Z] Simple Service started on port 3008
+2025-10-03T21:55:18: [2025-10-04T01:55:18.201Z] Access at: http://localhost:3008
+2025-10-03T21:55:18: [2025-10-04T01:55:18.336Z] GET / - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:55:18: [2025-10-04T01:55:18.407Z] GET /favicon.ico - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:55:19: [2025-10-04T01:55:19.059Z] Simple Windows Service initialized
+2025-10-03T21:55:19: [2025-10-04T01:55:19.082Z] Simple Service started on port 3008
+2025-10-03T21:55:19: [2025-10-04T01:55:19.082Z] Access at: http://localhost:3008
+2025-10-03T21:55:19: [2025-10-04T01:55:19.119Z] GET /favicon.ico - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:55:19: [2025-10-04T01:55:19.627Z] Simple Windows Service initialized
+2025-10-03T21:55:19: [2025-10-04T01:55:19.645Z] Simple Service started on port 3008
+2025-10-03T21:55:19: [2025-10-04T01:55:19.646Z] Access at: http://localhost:3008
+2025-10-03T21:55:20: [2025-10-04T01:55:20.808Z] GET /login - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:55:21: [2025-10-04T01:55:21.428Z] Simple Windows Service initialized
+2025-10-03T21:55:21: [2025-10-04T01:55:21.449Z] Simple Service started on port 3008
+2025-10-03T21:55:21: [2025-10-04T01:55:21.450Z] Access at: http://localhost:3008
+2025-10-03T21:55:21: [2025-10-04T01:55:21.930Z] GET /login - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 Edg/140.0.0.0
+2025-10-03T21:55:22: [2025-10-04T01:55:22.655Z] Simple Windows Service initialized
+2025-10-03T21:55:22: [2025-10-04T01:55:22.671Z] Simple Service started on port 3008
+2025-10-03T21:55:22: [2025-10-04T01:55:22.672Z] Access at: http://localhost:3008

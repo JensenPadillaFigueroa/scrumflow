@@ -3,6 +3,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { Calendar } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -27,15 +28,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
 import { insertProjectSchema } from "@shared/schema";
 
-const formSchema = insertProjectSchema.extend({
+const formSchema = z.object({
   name: z.string().min(1, "Project name is required"),
   description: z.string().min(1, "Description is required"),
   category: z.string().min(1, "Category is required"),
+  scheduleEnabled: z.boolean().default(false),
 });
 
 interface CreateProjectModalProps {
@@ -52,6 +55,7 @@ export default function CreateProjectModal({ open, onOpenChange }: CreateProject
       name: "",
       description: "",
       category: "",
+      scheduleEnabled: false,
     },
   });
 
@@ -150,6 +154,30 @@ export default function CreateProjectModal({ open, onOpenChange }: CreateProject
                     </SelectContent>
                   </Select>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="scheduleEnabled"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      Enable Task Schedule Calendar
+                    </FormLabel>
+                    <p className="text-sm text-muted-foreground">
+                      Allow scheduling tasks with due dates in a calendar view
+                    </p>
+                  </div>
                 </FormItem>
               )}
             />
