@@ -12,8 +12,8 @@ interface Notification {
 }
 
 export function useDesktopNotifications() {
-  const previousUnreadCount = useRef<number>(0);
   const shownNotificationIds = useRef<Set<string>>(new Set());
+  const previousNotificationIds = useRef<Set<string>>(new Set());
 
   // Solicitar permiso para notificaciones del sistema
   useEffect(() => {
@@ -34,7 +34,6 @@ export function useDesktopNotifications() {
   });
 
   const notifications = notificationData?.notifications || [];
-  const unreadCount = notificationData?.unreadCount || 0;
 
   // Mostrar notificación de escritorio cuando hay nuevas notificaciones
   useEffect(() => {
@@ -42,30 +41,24 @@ export function useDesktopNotifications() {
 
     // Solo mostrar si hay permiso
     if ("Notification" in window && Notification.permission === "granted") {
-      // Detectar nuevas notificaciones no leídas
-      const unreadNotifications = notifications.filter(n => !n.read);
+      // Obtener IDs actuales de todas las notificaciones
+      const currentNotificationIds = new Set(notifications.map(n => n.id));
       
-      // Detectar si hay un aumento en el contador (nueva notificación)
-      const hasNewNotifications = unreadCount > previousUnreadCount.current;
+      // Detectar notificaciones nuevas (que no estaban en la lista anterior)
+      const newNotifications = notifications.filter(notification => {
+        return !previousNotificationIds.current.has(notification.id) &&
+               !shownNotificationIds.current.has(notification.id);
+      });
       
-      // Si hay nuevas notificaciones, mostrar solo las más recientes
-      if (hasNewNotifications) {
+      // Mostrar solo las notificaciones nuevas
+      if (newNotifications.length > 0) {
         // Ordenar por fecha (más reciente primero)
-        const sortedNotifications = [...unreadNotifications].sort((a, b) => 
+        const sortedNotifications = [...newNotifications].sort((a, b) => 
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         
-        // Mostrar solo las notificaciones nuevas (diferencia en el contador)
-        const newCount = unreadCount - previousUnreadCount.current;
-        const newNotifications = sortedNotifications.slice(0, newCount);
-        
-        newNotifications.forEach(notification => {
-          // Si ya mostramos esta notificación, skip
-          if (shownNotificationIds.current.has(notification.id)) {
-            return;
-          }
-
-          // Marcar como mostrada
+        sortedNotifications.forEach(notification => {
+          // Marcar como mostrada en Windows
           shownNotificationIds.current.add(notification.id);
 
           // Crear notificación del sistema
@@ -95,10 +88,11 @@ export function useDesktopNotifications() {
           }, 5000);
         });
       }
+      
+      // Actualizar la lista de IDs anteriores
+      previousNotificationIds.current = currentNotificationIds;
     }
-
-    previousUnreadCount.current = unreadCount;
-  }, [notifications, unreadCount, notificationData]);
+  }, [notifications, notificationData]);
 
   // Función para solicitar permiso manualmente
   const requestPermission = async () => {
