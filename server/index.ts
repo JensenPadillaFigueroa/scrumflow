@@ -18,6 +18,13 @@ if (!fs.existsSync(sessionsDir)) {
   console.log("📁 Created sessions directory:", sessionsDir);
 }
 
+// Crear directorio para uploads si no existe
+const uploadsDir = path.join(process.cwd(), "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log("📁 Created uploads directory:", uploadsDir);
+}
+
 // --- Sesión con FileStore para persistencia ---
 app.use(
   session({

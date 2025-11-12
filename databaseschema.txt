@@ -1,0 +1,226 @@
+-- --------------------------------------------------------
+-- Host:                         tekpro.crec8oyg2aj7.us-east-1.rds.amazonaws.com
+-- Server version:               10.11.9-MariaDB-log - managed by https://aws.amazon.com/rds/
+-- Server OS:                    Linux
+-- HeidiSQL Version:             12.10.0.7000
+-- --------------------------------------------------------
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+-- Dumping database structure for scrumflow
+CREATE DATABASE IF NOT EXISTS `scrumflow` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
+USE `scrumflow`;
+
+-- Dumping structure for table scrumflow.notifications
+CREATE TABLE IF NOT EXISTS `notifications` (
+  `id` varchar(36) NOT NULL,
+  `user_id` varchar(36) NOT NULL,
+  `type` varchar(50) NOT NULL,
+  `title` text NOT NULL,
+  `message` text NOT NULL,
+  `read` tinyint(1) NOT NULL DEFAULT 0,
+  `metadata` text DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `idx_user_id` (`user_id`),
+  KEY `idx_created_at` (`created_at`),
+  KEY `idx_read` (`user_id`,`read`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- Dumping structure for table scrumflow.projects
+CREATE TABLE IF NOT EXISTS `projects` (
+  `id` char(36) NOT NULL,
+  `userId` char(36) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `category` varchar(100) DEFAULT NULL,
+  `createdAt` datetime(3) NOT NULL DEFAULT current_timestamp(3),
+  `created_by_admin_id` varchar(36) DEFAULT NULL,
+  `created_by_admin_username` varchar(255) DEFAULT NULL,
+  `schedule_enabled` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Enable/disable task schedule calendar for this project',
+  PRIMARY KEY (`id`),
+  KEY `idx_projects_createdAt` (`createdAt`),
+  KEY `idx_projects_category` (`category`),
+  KEY `idx_projects_userId` (`userId`) USING BTREE,
+  CONSTRAINT `fk_projects_user` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- Dumping structure for table scrumflow.project_members
+CREATE TABLE IF NOT EXISTS `project_members` (
+  `id` char(36) NOT NULL,
+  `projectId` char(36) NOT NULL,
+  `userId` char(36) NOT NULL,
+  `role` varchar(20) NOT NULL DEFAULT 'member',
+  `joinedAt` datetime(3) NOT NULL DEFAULT current_timestamp(3),
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_project_members_projectId` (`projectId`) USING BTREE,
+  KEY `idx_project_members_userId` (`userId`) USING BTREE,
+  KEY `idx_project_members_project_user` (`projectId`,`userId`) USING BTREE,
+  CONSTRAINT `fk_project_members_project` FOREIGN KEY (`projectId`) REFERENCES `projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_project_members_user` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Dumping data for table scrumflow.project_members: ~18 rows (approximately)
+
+-- Dumping structure for table scrumflow.quick_notes
+CREATE TABLE IF NOT EXISTS `quick_notes` (
+  `id` char(36) NOT NULL,
+  `userId` char(36) NOT NULL,
+  `content` text NOT NULL,
+  `projectId` char(36) DEFAULT NULL,
+  `color` varchar(20) NOT NULL DEFAULT 'yellow',
+  `pinned` tinyint(1) NOT NULL DEFAULT 0,
+  `createdAt` datetime(3) NOT NULL DEFAULT current_timestamp(3),
+  `updatedAt` datetime(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3),
+  `created_by_admin_id` varchar(36) DEFAULT NULL,
+  `created_by_admin_username` varchar(255) DEFAULT NULL,
+  `noteType` varchar(20) NOT NULL DEFAULT 'dashboard',
+  `archived` tinyint(1) NOT NULL DEFAULT 0,
+  `assigned_to_user_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_quick_notes_projectId` (`projectId`) USING BTREE,
+  KEY `idx_quick_notes_createdAt` (`createdAt`) USING BTREE,
+  KEY `idx_quick_notes_pinned` (`pinned`) USING BTREE,
+  KEY `idx_quick_notes_userId` (`userId`) USING BTREE,
+  KEY `idx_quick_notes_note_type` (`noteType`),
+  KEY `idx_quick_notes_archived` (`archived`),
+  KEY `idx_quick_notes_user_archived` (`userId`,`archived`),
+  KEY `idx_quick_notes_assigned_to_user_id` (`assigned_to_user_id`),
+  CONSTRAINT `fk_quick_notes_project` FOREIGN KEY (`projectId`) REFERENCES `projects` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_quick_notes_user` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- Dumping structure for table scrumflow.reminders
+CREATE TABLE IF NOT EXISTS `reminders` (
+  `id` varchar(255) NOT NULL DEFAULT uuid(),
+  `userId` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `title` text NOT NULL,
+  `description` text DEFAULT NULL,
+  `priority` text NOT NULL DEFAULT 'medium',
+  `completed` tinyint(1) NOT NULL DEFAULT 0,
+  `dueDate` date DEFAULT NULL,
+  `createdAt` timestamp NULL DEFAULT current_timestamp(),
+  `created_by_admin_id` varchar(36) DEFAULT NULL,
+  `created_by_admin_username` varchar(255) DEFAULT NULL,
+  `projectId` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_reminders_userId` (`userId`) USING BTREE,
+  KEY `idx_reminders_project_id` (`projectId`),
+  CONSTRAINT `fk_reminders_project` FOREIGN KEY (`projectId`) REFERENCES `projects` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_reminders_user` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+-- Dumping structure for table scrumflow.scheduled_tasks
+CREATE TABLE IF NOT EXISTS `scheduled_tasks` (
+  `id` char(36) NOT NULL,
+  `project_id` char(36) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `due_date` date NOT NULL,
+  `assigned_to` char(36) DEFAULT NULL,
+  `importance` enum('low','medium','high') NOT NULL DEFAULT 'medium',
+  `status` enum('todo','in_progress','done') NOT NULL DEFAULT 'todo',
+  `created_by` char(36) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `idx_project_id` (`project_id`) USING BTREE,
+  KEY `idx_due_date` (`due_date`) USING BTREE,
+  KEY `idx_assigned_to` (`assigned_to`) USING BTREE,
+  KEY `fk_scheduled_tasks_creator` (`created_by`),
+  CONSTRAINT `fk_scheduled_tasks_assigned` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_scheduled_tasks_creator` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `fk_scheduled_tasks_project` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- Dumping data for table scrumflow.scheduled_tasks: ~0 rows (approximately)
+
+-- Dumping structure for table scrumflow.tasks
+CREATE TABLE IF NOT EXISTS `tasks` (
+  `id` char(36) NOT NULL,
+  `userId` char(36) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `status` enum('wishlist','todo','in_progress','done') NOT NULL DEFAULT 'todo',
+  `projectId` char(36) DEFAULT NULL,
+  `createdAt` datetime(3) NOT NULL DEFAULT current_timestamp(3),
+  `created_by_admin_id` varchar(36) DEFAULT NULL,
+  `created_by_admin_username` varchar(255) DEFAULT NULL,
+  `assigned_to` varchar(36) DEFAULT NULL,
+  `order_index` int(11) DEFAULT NULL,
+  `due_date` datetime DEFAULT NULL COMMENT 'Fecha de vencimiento para agenda',
+  `importance` enum('low','medium','high','urgent') DEFAULT 'medium' COMMENT 'Prioridad de la tarea',
+  `focus_today` tinyint(1) NOT NULL DEFAULT 0 COMMENT 'Mark task as focus for today',
+  `focus_date` date DEFAULT NULL COMMENT 'Date when task was marked as focus',
+  `focus_user_id` varchar(36) DEFAULT NULL COMMENT 'User ID who marked this task as focus',
+  `completion_notes` text DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_tasks_projectId` (`projectId`),
+  KEY `idx_tasks_status` (`status`),
+  KEY `idx_tasks_createdAt` (`createdAt`),
+  KEY `idx_tasks_userId` (`userId`) USING BTREE,
+  KEY `idx_tasks_assigned_to` (`assigned_to`),
+  KEY `idx_tasks_status_assigned` (`status`,`assigned_to`),
+  KEY `idx_tasks_focus_today` (`focus_today`,`focus_date`,`focus_user_id`) USING BTREE,
+  KEY `fk_tasks_focus_user` (`focus_user_id`),
+  CONSTRAINT `fk_tasks_assigned_to` FOREIGN KEY (`assigned_to`) REFERENCES `users` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `fk_tasks_focus_user` FOREIGN KEY (`focus_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_tasks_project` FOREIGN KEY (`projectId`) REFERENCES `projects` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_tasks_user` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- Dumping structure for table scrumflow.users
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` char(36) NOT NULL,
+  `username` varchar(100) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `full_name` varchar(255) DEFAULT NULL,
+  `role` enum('admin','user') NOT NULL DEFAULT 'user',
+  `createdAt` datetime(3) NOT NULL DEFAULT current_timestamp(3),
+  `updatedAt` datetime(3) NOT NULL DEFAULT current_timestamp(3) ON UPDATE current_timestamp(3),
+  PRIMARY KEY (`id`) USING BTREE,
+  UNIQUE KEY `username` (`username`),
+  UNIQUE KEY `email` (`email`),
+  UNIQUE KEY `idx_users_username` (`username`) USING BTREE,
+  UNIQUE KEY `idx_users_email` (`email`) USING BTREE,
+  KEY `idx_users_createdAt` (`createdAt`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+-- Dumping structure for table scrumflow.wishlist
+CREATE TABLE IF NOT EXISTS `wishlist` (
+  `id` char(36) NOT NULL,
+  `userId` char(36) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `category` varchar(100) DEFAULT NULL,
+  `createdAt` datetime(3) NOT NULL DEFAULT current_timestamp(3),
+  `created_by_admin_id` varchar(36) DEFAULT NULL,
+  `created_by_admin_username` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_wishlist_createdAt` (`createdAt`),
+  KEY `idx_wishlist_category` (`category`),
+  KEY `idx_wishlist_userId` (`userId`) USING BTREE,
+  CONSTRAINT `fk_wishlist_user` FOREIGN KEY (`userId`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;

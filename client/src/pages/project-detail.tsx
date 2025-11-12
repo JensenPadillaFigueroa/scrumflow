@@ -18,6 +18,7 @@ import TodaysFocus from "@/components/project/todays-focus";
 import SyncIndicator from "@/components/project/sync-indicator";
 import FloatingNoteButton from "@/components/ui/floating-note-button";
 import TaskCalendar from "@/components/calendar/task-calendar";
+import AttachmentList from "@/components/attachments/attachment-list";
 import { useProjectSync } from "@/hooks/use-project-sync";
 import type { Project, Task } from "@shared/schema";
 import { Input } from "@/components/ui/input";
@@ -380,13 +381,19 @@ export default function ProjectDetail() {
         />
       </div>
 
-      {/* Project Quick Notes and Today's Focus (with Team Focus tabs) */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      {/* Project Quick Notes, Attachments, and Today's Focus */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+        {/* Quick Notes */}
         <ProjectQuickNotes 
           projectId={id!} 
           projectName={project?.name || "Project"}
           projectOwnerId={project?.userId}
         />
+        
+        {/* Project Attachments */}
+        <AttachmentList entityType="project" entityId={id!} />
+        
+        {/* Today's Focus */}
         <TodaysFocus projectId={id!} />
       </div>
       

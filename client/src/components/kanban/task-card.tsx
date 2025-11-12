@@ -3,10 +3,13 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Edit2, Trash2, ChevronLeft, ChevronRight, Save, X, Flame, FileText } from "lucide-react";
+import { Edit2, Trash2, ChevronLeft, ChevronRight, Save, X, Flame, FileText, Paperclip } from "lucide-react";
 import { AdminCreatedBadge } from "@/components/ui/admin-created-badge";
 import { AssignedBadge } from "@/components/ui/assigned-badge";
 import { TaskCollaboratorBadge } from "@/components/ui/collaborator-badge";
+import AttachmentCount from "@/components/attachments/attachment-count";
+import TaskAttachmentsModal from "@/components/attachments/task-attachments-modal";
+import TaskAttachmentPreview from "@/components/attachments/task-attachment-preview";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -124,6 +127,7 @@ export default function TaskCard({ task, project, color, onStatusChange, onReord
   const [editUiStatus, setEditUiStatus] = useState<"wishlist" | "todo" | "in-process" | "finished">(toUiStatus(task.status));
   const [editAssignedTo, setEditAssignedTo] = useState<string | null>(task.assignedTo ?? null);
   const [isNotesExpanded, setIsNotesExpanded] = useState(false);
+  const [showAttachmentsModal, setShowAttachmentsModal] = useState(false);
   const maxNotesLength = 250;
 
   // Ref para drag image personalizado
@@ -510,6 +514,7 @@ export default function TaskCard({ task, project, color, onStatusChange, onReord
   const canMovePrevious = getPreviousStage(uiStatus) !== null;
 
   return (
+    <>
     <motion.div
       initial={{ opacity: 0, y: 8, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -655,6 +660,24 @@ export default function TaskCard({ task, project, color, onStatusChange, onReord
                 data-testid={`button-focus-task-${task.id}`}
               >
                 <Flame className={`h-3 w-3 ${task.focusToday ? 'animate-pulse' : ''}`} />
+              </Button>
+            )}
+
+            {/* Attachments */}
+            {!isEditing && !isConfirmingDelete && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-gray-400 hover:text-blue-600 hover:bg-blue-50 h-6 w-6 p-0 transition-all duration-200 hover:scale-105 rounded-full"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowAttachmentsModal(true);
+                }}
+                disabled={isBusy}
+                title="Manage attachments"
+                data-testid={`button-attachments-task-${task.id}`}
+              >
+                <Paperclip className="h-3 w-3" />
               </Button>
             )}
 
@@ -885,6 +908,14 @@ export default function TaskCard({ task, project, color, onStatusChange, onReord
           </div>
         )}
 
+        {/* Attachment Preview - mostrar antes del footer */}
+        {!isEditing && (
+          <TaskAttachmentPreview 
+            taskId={task.id} 
+            onClick={() => setShowAttachmentsModal(true)}
+          />
+        )}
+
         {/* Footer */}
         <div className="pt-3 border-t border-gray-100 mt-3">
           <div className="flex items-center gap-2 flex-wrap">
@@ -906,6 +937,8 @@ export default function TaskCard({ task, project, color, onStatusChange, onReord
                 assignedToFullName={(task as any).assigned_to_full_name}
               />
             )}
+            {/* Attachment count */}
+            <AttachmentCount entityType="task" entityId={task.id} />
           </div>
           {/* Completed date - mostrar en línea separada si está finished */}
           {!isEditing && isFinished && (
@@ -917,5 +950,14 @@ export default function TaskCard({ task, project, color, onStatusChange, onReord
       </CardContent>
     </Card>
     </motion.div>
+
+    {/* Attachments Modal */}
+    <TaskAttachmentsModal
+      open={showAttachmentsModal}
+      onOpenChange={setShowAttachmentsModal}
+      taskId={task.id}
+      taskTitle={task.title}
+    />
+    </>
   );
 }

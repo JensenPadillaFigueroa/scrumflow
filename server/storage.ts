@@ -14,7 +14,9 @@ import type {
   Reminder, 
   InsertReminder, 
   QuickNote, 
-  InsertQuickNote 
+  InsertQuickNote,
+  Attachment,
+  InsertAttachment
 } from "@shared/schema";
 
 export interface User {
@@ -90,6 +92,12 @@ export interface IStorage {
   createQuickNote(note: InsertQuickNote & { userId?: string }): Promise<QuickNote>;
   updateQuickNote(id: string, updates: Partial<InsertQuickNote>): Promise<QuickNote | undefined>;
   deleteQuickNote(id: string): Promise<boolean>;
+
+  // Attachments
+  getAttachments(entityType: 'task' | 'project', entityId: string): Promise<Attachment[]>;
+  getAttachment(id: string): Promise<Attachment | undefined>;
+  createAttachment(attachment: InsertAttachment & { uploadedBy: string }): Promise<Attachment>;
+  deleteAttachment(id: string): Promise<boolean>;
 }
 
 type DbStatus = "wishlist" | "todo" | "in_progress" | "done";
@@ -1602,6 +1610,91 @@ export class MariaStorage implements IStorage {
 
   async deleteQuickNote(id: string): Promise<boolean> {
     const [result] = await this.pool.execute("DELETE FROM quick_notes WHERE id = ?", [id]);
+    return (result as any).affectedRows > 0;
+  }
+
+  // -------- Attachments --------
+  async getAttachments(entityType: 'task' | 'project', entityId: string): Promise<Attachment[]> {
+    const [rows] = await this.pool.query(
+      `SELECT 
+        id, 
+        file_name as fileName, 
+        file_path as filePath, 
+        file_size as fileSize, 
+        file_type as fileType, 
+        file_extension as fileExtension,
+        entity_type as entityType,
+        entity_id as entityId,
+        uploaded_by as uploadedBy,
+        description,
+        is_image as isImage,
+        uploaded_at as uploadedAt,
+        updated_at as updatedAt
+      FROM attachments 
+      WHERE entity_type = ? AND entity_id = ?
+      ORDER BY uploaded_at DESC`,
+      [entityType, entityId]
+    );
+    return rows as Attachment[];
+  }
+
+  async getAttachment(id: string): Promise<Attachment | undefined> {
+    const [rows] = await this.pool.query(
+      `SELECT 
+        id, 
+        file_name as fileName, 
+        file_path as filePath, 
+        file_size as fileSize, 
+        file_type as fileType, 
+        file_extension as fileExtension,
+        entity_type as entityType,
+        entity_id as entityId,
+        uploaded_by as uploadedBy,
+        description,
+        is_image as isImage,
+        uploaded_at as uploadedAt,
+        updated_at as updatedAt
+      FROM attachments 
+      WHERE id = ? 
+      LIMIT 1`,
+      [id]
+    );
+    const list = rows as Attachment[];
+    return list[0];
+  }
+
+  async createAttachment(attachment: InsertAttachment & { uploadedBy: string }): Promise<Attachment> {
+    const id = randomUUID();
+    const now = new Date();
+    
+    await this.pool.execute(
+      `INSERT INTO attachments 
+        (id, file_name, file_path, file_size, file_type, file_extension, entity_type, entity_id, uploaded_by, description, is_image, uploaded_at, updated_at) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        attachment.fileName,
+        attachment.filePath,
+        attachment.fileSize,
+        attachment.fileType,
+        attachment.fileExtension,
+        attachment.entityType,
+        attachment.entityId,
+        attachment.uploadedBy,
+        attachment.description ?? null,
+        attachment.isImage ?? false,
+        now,
+        now
+      ]
+    );
+
+    const created = await this.getAttachment(id);
+    if (!created) throw new Error("Failed to create attachment");
+    return created;
+  }
+
+  async deleteAttachment(id: string): Promise<boolean> {
+    const [result] = await this.pool.execute("DELETE FROM attachments WHERE id = ?", [id]);
     return (result as any).affectedRows > 0;
   }
 }
