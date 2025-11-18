@@ -19,6 +19,7 @@ import SyncIndicator from "@/components/project/sync-indicator";
 import FloatingNoteButton from "@/components/ui/floating-note-button";
 import TaskCalendar from "@/components/calendar/task-calendar";
 import AttachmentList from "@/components/attachments/attachment-list";
+import ProjectChat from "@/components/chat/project-chat";
 import { useProjectSync } from "@/hooks/use-project-sync";
 import type { Project, Task } from "@shared/schema";
 import { Input } from "@/components/ui/input";
@@ -37,6 +38,11 @@ type UiStatus = "wishlist" | "todo" | "in-process" | "finished";
 export default function ProjectDetail() {
   const { id } = useParams();
   const [showCreateTask, setShowCreateTask] = useState(false);
+  
+  // Get current user
+  const { data: session } = useQuery<{ user: { id: string; username: string; email: string; full_name: string; role: string } }>({
+    queryKey: ["/api/session"],
+  });
   
   // Hook para sincronización automática del proyecto
   const { forceSync } = useProjectSync({ 
@@ -381,8 +387,8 @@ export default function ProjectDetail() {
         />
       </div>
 
-      {/* Project Quick Notes, Attachments, and Today's Focus */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      {/* Project Quick Notes, Attachments, Today's Focus, and Chat */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6 mb-6">
         {/* Quick Notes */}
         <ProjectQuickNotes 
           projectId={id!} 
@@ -395,6 +401,15 @@ export default function ProjectDetail() {
         
         {/* Today's Focus */}
         <TodaysFocus projectId={id!} />
+
+        {/* Project Chat */}
+        <div className="h-[500px]">
+          <ProjectChat 
+            projectId={id!} 
+            projectName={project?.name}
+            currentUserId={session?.user?.id}
+          />
+        </div>
       </div>
       
       {/* Task Calendar - Only show if enabled */}

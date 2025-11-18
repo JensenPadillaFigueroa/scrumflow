@@ -16,7 +16,9 @@ import type {
   QuickNote, 
   InsertQuickNote,
   Attachment,
-  InsertAttachment
+  InsertAttachment,
+  ProjectMessage,
+  InsertProjectMessage
 } from "@shared/schema";
 
 export interface User {
@@ -98,6 +100,12 @@ export interface IStorage {
   getAttachment(id: string): Promise<Attachment | undefined>;
   createAttachment(attachment: InsertAttachment & { uploadedBy: string }): Promise<Attachment>;
   deleteAttachment(id: string): Promise<boolean>;
+
+  // Project Messages (Chat)
+  getProjectMessages(projectId: string, limit?: number): Promise<ProjectMessage[]>;
+  createProjectMessage(message: InsertProjectMessage & { userId: string }): Promise<ProjectMessage>;
+  updateProjectMessage(id: string, message: string): Promise<ProjectMessage | undefined>;
+  deleteProjectMessage(id: string): Promise<boolean>;
 }
 
 type DbStatus = "wishlist" | "todo" | "in_progress" | "done";
@@ -1695,6 +1703,67 @@ export class MariaStorage implements IStorage {
 
   async deleteAttachment(id: string): Promise<boolean> {
     const [result] = await this.pool.execute("DELETE FROM attachments WHERE id = ?", [id]);
+    return (result as any).affectedRows > 0;
+  }
+
+  // Project Messages (Chat)
+  async getProjectMessages(projectId: string, limit: number = 100): Promise<ProjectMessage[]> {
+    const [rows] = await this.pool.execute(
+      `SELECT pm.*, u.username, u.full_name
+       FROM project_messages pm
+       JOIN users u ON pm.user_id = u.id
+       WHERE pm.project_id = ?
+       ORDER BY pm.created_at DESC
+       LIMIT ?`,
+      [projectId, limit]
+    );
+    return (rows as any[]).reverse(); // Reverse to show oldest first
+  }
+
+  async createProjectMessage(message: InsertProjectMessage & { userId: string }): Promise<ProjectMessage> {
+    const id = randomUUID();
+    const now = new Date();
+    
+    await this.pool.execute(
+      `INSERT INTO project_messages (id, project_id, user_id, message, created_at)
+       VALUES (?, ?, ?, ?, ?)`,
+      [id, message.projectId, message.userId, message.message, now]
+    );
+
+    const [rows] = await this.pool.execute(
+      `SELECT pm.*, u.username, u.full_name
+       FROM project_messages pm
+       JOIN users u ON pm.user_id = u.id
+       WHERE pm.id = ?`,
+      [id]
+    );
+    
+    return (rows as any[])[0];
+  }
+
+  async updateProjectMessage(id: string, message: string): Promise<ProjectMessage | undefined> {
+    const now = new Date();
+    
+    await this.pool.execute(
+      `UPDATE project_messages 
+       SET message = ?, edited = 1, edited_at = ?
+       WHERE id = ?`,
+      [message, now, id]
+    );
+
+    const [rows] = await this.pool.execute(
+      `SELECT pm.*, u.username, u.full_name
+       FROM project_messages pm
+       JOIN users u ON pm.user_id = u.id
+       WHERE pm.id = ?`,
+      [id]
+    );
+    
+    return (rows as any[])[0];
+  }
+
+  async deleteProjectMessage(id: string): Promise<boolean> {
+    const [result] = await this.pool.execute("DELETE FROM project_messages WHERE id = ?", [id]);
     return (result as any).affectedRows > 0;
   }
 }

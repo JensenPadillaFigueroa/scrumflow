@@ -12,6 +12,7 @@ import { ZodError, z } from "zod";
 import notificationsRouter, { createNotification } from "./routes/notifications";
 import scheduledTasksRouter from "./routes/scheduled-tasks";
 import { registerAttachmentRoutes } from "./routes/attachments";
+import { registerChatRoutes } from "./routes/chat";
 
 /** Respuesta estándar para errores de Zod */
 function zodReply(res: Response, error: unknown) {
@@ -1542,6 +1543,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // -------- Attachments --------
   registerAttachmentRoutes(app, storage);
+
+  // -------- Chat --------
+  registerChatRoutes(app, storage);
 
   const httpServer = createServer(app);
   return httpServer;

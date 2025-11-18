@@ -97,6 +97,16 @@ export const attachments = pgTable("attachments", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const projectMessages = pgTable("project_messages", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  projectId: varchar("project_id").notNull().references(() => projects.id, { onDelete: "cascade" }),
+  userId: varchar("user_id").notNull(), // Usuario que envió el mensaje
+  message: text("message").notNull(),
+  edited: boolean("edited").notNull().default(false),
+  editedAt: timestamp("edited_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const insertProjectSchema = createInsertSchema(projects).omit({
   id: true,
   createdAt: true,
@@ -147,6 +157,13 @@ export const insertAttachmentSchema = createInsertSchema(attachments).omit({
   updatedAt: true,
 });
 
+export const insertProjectMessageSchema = createInsertSchema(projectMessages).omit({
+  id: true,
+  createdAt: true,
+  edited: true,
+  editedAt: true,
+});
+
 export type InsertProject = z.infer<typeof insertProjectSchema>;
 export type Project = typeof projects.$inferSelect;
 
@@ -170,3 +187,6 @@ export type Notification = typeof notifications.$inferSelect;
 
 export type InsertAttachment = z.infer<typeof insertAttachmentSchema>;
 export type Attachment = typeof attachments.$inferSelect;
+
+export type InsertProjectMessage = z.infer<typeof insertProjectMessageSchema>;
+export type ProjectMessage = typeof projectMessages.$inferSelect;
